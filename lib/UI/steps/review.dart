@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loanify_mobile/models/loan_models.dart';
+
+import '../../models/applicaiton_model.dart';
 
 class ReviewPage extends ConsumerWidget {
   @override

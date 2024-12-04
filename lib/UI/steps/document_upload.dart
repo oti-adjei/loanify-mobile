@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loanify_mobile/loan/review.dart';
-import 'package:loanify_mobile/models/loan_models.dart';
+import 'package:loanify_mobile/UI/steps/review.dart';
+
+import '../../models/applicaiton_model.dart';
 
 class DocumentUploadPage extends ConsumerStatefulWidget {
   @override

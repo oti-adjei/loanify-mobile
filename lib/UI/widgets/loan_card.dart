@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loanify_mobile/loan/collateral.dart';
-import 'package:loanify_mobile/loan/loan_details.dart';
-import 'package:loanify_mobile/loan/review.dart';
-import 'package:loanify_mobile/loan/user_info.dart';
-import 'package:loanify_mobile/models/loan_models.dart';
+import 'package:loanify_mobile/UI/steps/collateral.dart';
+import 'package:loanify_mobile/UI/steps/loan_details.dart';
+import 'package:loanify_mobile/UI/steps/review.dart';
+import 'package:loanify_mobile/UI/steps/user_info.dart';
+
+import '../../models/applicaiton_model.dart';
 
 class LoanCard extends ConsumerStatefulWidget {
   @override

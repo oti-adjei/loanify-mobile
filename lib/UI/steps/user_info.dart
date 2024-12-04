@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:loanify_mobile/loan/loan_details.dart';
-import 'package:loanify_mobile/models/loan_models.dart';
+import 'package:loanify_mobile/UI/steps/loan_details.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../models/applicaiton_model.dart';
 
 class UserInfoPage extends ConsumerWidget {
   final _formKey = GlobalKey<FormState>();

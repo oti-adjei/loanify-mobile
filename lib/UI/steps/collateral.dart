@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loanify_mobile/loan/document_upload.dart';
-import 'package:loanify_mobile/models/loan_models.dart';
+import 'package:loanify_mobile/UI/steps/document_upload.dart';
+
+import '../../models/applicaiton_model.dart';
 
 class CollateralPage extends ConsumerWidget {
   final TextEditingController collateralTypeController =
