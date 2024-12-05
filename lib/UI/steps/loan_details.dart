@@ -11,6 +11,7 @@ class LoanDetailsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final _loanNotifier = ref.read(loanApplicationProvider.notifier);
     return Scaffold(
       appBar: AppBar(title: Text('Step 2: Loan Details')),
       body: Padding(
@@ -33,20 +34,38 @@ class LoanDetailsPage extends ConsumerWidget {
               keyboardType: TextInputType.number,
             ),
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                ref.read(loanApplicationProvider.notifier).updateLoanDetails(
-                      loanAmount: double.parse(loanAmountController.text),
-                      loanTerm: int.parse(loanTermController.text),
-                      interestRate: double.parse(interestRateController.text),
-                      purpose: 'Education', // Replace with user input
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      '/',
+                      (route) => false,
                     );
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => CollateralPage()),
-                );
-              },
-              child: Text('Next'),
+                  },
+                  child: Text('Save Application'),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    ref
+                        .read(loanApplicationProvider.notifier)
+                        .updateLoanDetails(
+                          loanAmount: double.parse(loanAmountController.text),
+                          loanTerm: int.parse(loanTermController.text),
+                          interestRate:
+                              double.parse(interestRateController.text),
+                          purpose: 'Education', // Replace with user input
+                        );
+                    await _loanNotifier.updateApplication();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => CollateralPage()),
+                    );
+                  },
+                  child: Text('Next'),
+                ),
+              ],
             ),
           ],
         ),

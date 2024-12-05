@@ -19,6 +19,8 @@ class _DocumentUploadPageState extends ConsumerState<DocumentUploadPage> {
     });
 
     ref.read(loanApplicationProvider.notifier).addDocument(filePath);
+    final _loanNotifier = ref.read(loanApplicationProvider.notifier);
+    _loanNotifier.updateApplication();
   }
 
   @override
@@ -53,14 +55,28 @@ class _DocumentUploadPageState extends ConsumerState<DocumentUploadPage> {
               child: Text('Upload Document'),
             ),
             SizedBox(height: 32),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ReviewPage()),
-                );
-              },
-              child: Text('Next'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      '/',
+                      (route) => false,
+                    );
+                  },
+                  child: Text('Save Application'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ReviewPage()),
+                    );
+                  },
+                  child: Text('Next'),
+                ),
+              ],
             ),
           ],
         ),

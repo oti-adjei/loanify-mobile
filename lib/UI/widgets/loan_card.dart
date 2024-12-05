@@ -1,51 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loanify_mobile/UI/steps/collateral.dart';
-import 'package:loanify_mobile/UI/steps/loan_details.dart';
-import 'package:loanify_mobile/UI/steps/review.dart';
-import 'package:loanify_mobile/UI/steps/user_info.dart';
 
 import '../../models/applicaiton_model.dart';
 
 class LoanCard extends ConsumerStatefulWidget {
+  const LoanCard({super.key});
+
   @override
   _LoanCardState createState() => _LoanCardState();
 }
 
 class _LoanCardState extends ConsumerState<LoanCard> {
-  bool isApplicationInProgress = true;
-  int currentStage = 0; // Current stage of the loan application (0 to 4).
-
-  @override
-  void initState() {
-    super.initState();
-    final application = ref.read(loanApplicationProvider);
-    if (application.monthlyIncome == null || application.monthlyIncome == 0) {
-      setState(() {
-        isApplicationInProgress = false;
-        currentStage = 0;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    void createApplication(BuildContext context) {
-      final application = ref.read(loanApplicationProvider);
-      if (application.firstName.isEmpty) {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => UserInfoPage()));
-      } else if (application.loanAmount == null) {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => LoanDetailsPage()));
-      } else if (application.collateralType.isEmpty) {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => CollateralPage()));
-      } else {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => ReviewPage()));
-      }
+    final loanState = ref.watch(loanApplicationProvider);
+    final loanNotifier = ref.read(loanApplicationProvider.notifier);
+
+    print(loanState.isApplicationInProgress);
+    print("Applocation initialized");
+    print(loanState.currentStage);
+
+    if (loanState.isApplicationInProgress) {
+      print('Application in progress');
+      print('Current stage: ${loanState.currentStage}');
     }
+
+    //push to right page based on loanNotifier
 
     return Card(
       margin: EdgeInsets.symmetric(horizontal: 16),
@@ -55,8 +35,7 @@ class _LoanCardState extends ConsumerState<LoanCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (!isApplicationInProgress) ...[
-              // Display this content when no application is in progress
+            if (!loanState.isApplicationInProgress) ...[
               Text('Make Your Loans',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               SizedBox(height: 8),
@@ -65,14 +44,14 @@ class _LoanCardState extends ConsumerState<LoanCard> {
                 style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
               ),
               SizedBox(height: 12),
-              ElevatedButton.icon(
-                onPressed: () => createApplication(context),
-                icon: Icon(Icons.add),
-                label: Text('Create Application'),
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8)),
-                ),
+              ElevatedButton(
+                onPressed: () async {
+                  await loanNotifier.startApplication();
+                  if (mounted) {
+                    loanNotifier.navigateToNextStep(context);
+                  }
+                },
+                child: Text('Start Application'),
               ),
             ] else ...[
               // Display progress indicator and related content when an application is in progress
@@ -91,7 +70,7 @@ class _LoanCardState extends ConsumerState<LoanCard> {
                         width: 24,
                         height: 24,
                         decoration: BoxDecoration(
-                          color: index <= currentStage
+                          color: index <= loanState.currentStage
                               ? Colors.blue
                               : Colors
                                   .grey.shade300, // Highlight if current stage
@@ -106,7 +85,7 @@ class _LoanCardState extends ConsumerState<LoanCard> {
                             '${index + 1}',
                             style: TextStyle(
                               fontSize: 12,
-                              color: index <= currentStage
+                              color: index <= loanState.currentStage
                                   ? Colors.white
                                   : Colors.grey.shade600,
                             ),
@@ -115,7 +94,7 @@ class _LoanCardState extends ConsumerState<LoanCard> {
                       ),
                       SizedBox(height: 4),
                       // Text below the circle
-                      if (index == currentStage)
+                      if (index == loanState.currentStage)
                         Text(
                           'Current',
                           style: TextStyle(
@@ -128,24 +107,28 @@ class _LoanCardState extends ConsumerState<LoanCard> {
                 }),
               ),
               SizedBox(height: 16),
-              ElevatedButton.icon(
-                onPressed: () => continueApplication(context),
-                icon: Icon(Icons.arrow_forward),
-                label: Text('Continue Application'),
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8)),
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton(
+                    onPressed: () async {
+                      if (mounted) {
+                        loanNotifier.navigateToNextStep(context);
+                      }
+                    },
+                    child: Text('Continue App.'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () async =>
+                        await loanNotifier.resetApplication(),
+                    child: Text('Reset App.'),
+                  ),
+                ],
               ),
             ],
           ],
         ),
       ),
     );
-  }
-
-  void continueApplication(BuildContext context) {
-    // Action for continuing the in-progress application
-    print('Continue application tapped');
   }
 }

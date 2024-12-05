@@ -12,6 +12,7 @@ class CollateralPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final _loanNotifier = ref.read(loanApplicationProvider.notifier);
     return Scaffold(
       appBar: AppBar(title: Text('Step 3: Collateral Details')),
       body: Padding(
@@ -30,19 +31,35 @@ class CollateralPage extends ConsumerWidget {
               keyboardType: TextInputType.number,
             ),
             SizedBox(height: 32),
-            ElevatedButton(
-              onPressed: () {
-                ref.read(loanApplicationProvider.notifier).updateCollateral(
-                      collateralType: collateralTypeController.text,
-                      collateralValue:
-                          double.parse(collateralValueController.text),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      '/',
+                      (route) => false,
                     );
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => DocumentUploadPage()),
-                );
-              },
-              child: Text('Next'),
+                  },
+                  child: Text('Save Application'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    ref.read(loanApplicationProvider.notifier).updateCollateral(
+                          collateralType: collateralTypeController.text,
+                          collateralValue:
+                              double.parse(collateralValueController.text),
+                        );
+                    _loanNotifier.updateApplication();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => DocumentUploadPage()),
+                    );
+                  },
+                  child: Text('Next'),
+                ),
+              ],
             ),
           ],
         ),

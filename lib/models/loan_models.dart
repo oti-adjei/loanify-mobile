@@ -1,5 +1,5 @@
 class Loan {
-  final int userId;
+  // final int userId;
   final double loanAmount;
   final int loanTerm;
   final double interestRate;
@@ -8,18 +8,18 @@ class Loan {
   final String status;
 
   Loan({
-    required this.userId,
+    // required this.userId,
     required this.loanAmount,
     required this.loanTerm,
     required this.interestRate,
     required this.purpose,
     required this.applicationDate,
-    required this.status,
+    this.status = 'pending',
   });
 
   Map<String, dynamic> toJson() {
     return {
-      'userId': userId,
+      // 'userId': userId,
       'loanAmount': loanAmount,
       'loanTerm': loanTerm,
       'interestRate': interestRate,

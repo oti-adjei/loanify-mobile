@@ -1,12 +1,76 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loanify_mobile/models/credit_history.dart';
 
 import '../../models/applicaiton_model.dart';
+import '../../models/collateral.dart';
+import '../../models/loan_decisions.dart';
+import '../../models/loan_models.dart';
+import '../../providers/loan.dart';
 
 class ReviewPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final application = ref.watch(loanApplicationProvider);
+
+    void processAndSubmitLoanApplication(BuildContext context) {
+      final notifier = ref.read(loanNotifierProvider);
+      ;
+
+      final loan = Loan(
+        loanAmount: application.loanAmount ?? 0.0,
+        loanTerm: application.loanTerm ?? 0,
+        interestRate: application.interestRate ?? 0.0,
+        purpose: application.purpose ?? '',
+        applicationDate: application.applicationDate ?? DateTime.now(),
+      );
+
+      /*final collateral = Collateral(
+        collateralType: application.collateralType ?? '',
+        estimatedValue: application.collateralValue ?? 0.0,
+      );
+
+      final loanDecision = LoanDecision(
+        decisionDate: DateTime.now(),
+        decisionStatus: 'Pending',
+        reason: '',
+        approvedBy: '',
+      );
+
+      final creditHistory = CreditHistory(
+        userId: application.userId,
+        creditorName: application.creditorName,
+        accountNumber: application.accountNumber,
+        creditLimit: application.creditLimit,
+        outstandingBalance: application.outstandingBalance,
+        paymentHistory: application.paymentHistory,
+      );
+
+      notifier
+          .processLoanApplication(
+        loan: loan,
+        collateral: collateral,
+        creditHistory: creditHistory, // Assuming you have a credit history object
+        decision: loanDecision,
+      )
+          .then((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Loan application submitted successfully!')),
+        );
+        ref
+                                .read(loanApplicationProvider.notifier)
+                                .resetApplication();
+        //remove all old routes from the navigator and go to home
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          '/',
+          (route) => false,
+        );
+      }).catchError((error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to submit loan application: $error')),
+        );
+      });*/
+    }
 
     return Scaffold(
       appBar: AppBar(title: Text('Step 5: Review and Submit')),
@@ -47,24 +111,25 @@ class ReviewPage extends ConsumerWidget {
                 ...application.documents.map((doc) => 'Document: $doc'),
               ]),
               SizedBox(height: 32),
-              ElevatedButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: Text('Application Submitted'),
-                      content: Text(
-                          'Your loan application has been submitted successfully.'),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: Text('OK'),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-                child: Text('Submit Application'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        '/',
+                        (route) => false,
+                      );
+                    },
+                    child: Text('Save Application'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      processAndSubmitLoanApplication(context);
+                    },
+                    child: Text('Submit Application'),
+                  ),
+                ],
               ),
             ],
           ),
